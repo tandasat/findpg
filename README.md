@@ -13,7 +13,7 @@ Installation
 
     > .load \<fullpath_to_the_DLL_file\>
 
-   If you copied findpg.dll into a <WINDBG_DIR>/winext folder, you can omit a path.
+   If you copied findpg.dll into a \<WINDBG_DIR\>/winext folder, you can omit a path.
 
     > .load findpg
 
