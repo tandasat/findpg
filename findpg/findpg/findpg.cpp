@@ -177,7 +177,7 @@ EXT_COMMAND(findpg,
     "Displays base addresses of PatchGuard pages",
     "")
 {
-    Out("Wait untill analysis is completed. It typically takes 2-5 minutes.\n");
+    Out("Wait until analysis is completed. It typically takes 2-5 minutes.\n");
     Out("Or press Ctrl+Break or [Debug] > [Break] to stop analysis.\n");
 
     // Collect PatchGuard pages from NonPagedPool and independent pages
