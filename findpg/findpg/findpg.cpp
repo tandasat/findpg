@@ -63,11 +63,13 @@ public:
     EXT_COMMAND_METHOD(findpg);
 
 private:
+    void findpgInternal();
+
     std::vector <std::tuple<POOL_TRACKER_BIG_PAGES, RandomnessInfo>>
-        EXT_CLASS::FindPgPagesFromNonPagedPool();
+        FindPgPagesFromNonPagedPool();
 
     std::vector<std::tuple<ULONG64, SIZE_T, RandomnessInfo>>
-        EXT_CLASS::FindPgPagesFromIndependentPages();
+        FindPgPagesFromIndependentPages();
 
     std::array<HARDWARE_PTE, 512> GetPtes(
         __in ULONG64 PteBase);
@@ -112,7 +114,6 @@ ULONG GetRamdomness(
     void* Addr,
     SIZE_T Size);
 
-
 } // End of namespace {unnamed}
 
 
@@ -142,8 +143,8 @@ HRESULT EXT_CLASS::Initialize()
     {
         return result;
     }
-    auto debugClientScope = make_unique_ex(debugClient,
-        [](PDEBUG_CLIENT p) { p->Release(); });
+    auto debugClientScope = std::experimental::scope_guard(
+        [debugClient]() { debugClient->Release(); });
 
     PDEBUG_CONTROL debugControl = nullptr;
     result = debugClient->QueryInterface(__uuidof(IDebugControl),
@@ -152,8 +153,8 @@ HRESULT EXT_CLASS::Initialize()
     {
         return result;
     }
-    auto debugControlScope = make_unique_ex(debugControl,
-        [](PDEBUG_CONTROL p) { p->Release(); });
+    auto debugControlScope = std::experimental::scope_guard(
+        [debugControl]() { debugControl->Release(); });
 
     ExtensionApis.nSize = sizeof(ExtensionApis);
     result = debugControl->GetWindbgExtensionApis64(&ExtensionApis);
@@ -176,6 +177,22 @@ HRESULT EXT_CLASS::Initialize()
 EXT_COMMAND(findpg,
     "Displays base addresses of PatchGuard pages",
     "")
+{
+    try
+    {
+        findpgInternal();
+    }
+    catch (std::exception& e)
+    {
+        // As an exception string does not appear on Windbg,
+        // we need to handle it manually.
+        Err("%s\n", e.what());
+    }
+}
+
+
+// Does main stuff and throws an exception when
+void EXT_CLASS::findpgInternal()
 {
     Out("Wait until analysis is completed. It typically takes 2-5 minutes.\n");
     Out("Or press Ctrl+Break or [Debug] > [Break] to stop analysis.\n");
@@ -222,24 +239,23 @@ EXT_COMMAND(findpg,
     }
 }
 
-
 // Collects PatchGuard pages reside in NonPagedPool
 std::vector <std::tuple<POOL_TRACKER_BIG_PAGES, RandomnessInfo>>
 EXT_CLASS::FindPgPagesFromNonPagedPool()
 {
     ULONG64 offset = 0;
 
-    // Read MmNonPagedPoolStart
+    // Read MmNonPagedPoolStart if it is possible. On Windows 8.1, this symbol
+    // has been removed and this magic value is used instead.
+    ULONG64 mmNonPagedPoolStart = 0xFFFFE00000000000;
     auto result = m_Symbols->GetOffsetByName("nt!MmNonPagedPoolStart", &offset);
-    if (!SUCCEEDED(result))
+    if (SUCCEEDED(result))
     {
-        throw std::runtime_error("nt!MmNonPagedPoolStart could not be found.");
-    }
-    ULONG64 mmNonPagedPoolStart = 0;
-    result = m_Data->ReadPointersVirtual(1, offset, &mmNonPagedPoolStart);
-    if (!SUCCEEDED(result))
-    {
-        throw std::runtime_error("nt!MmNonPagedPoolStart could not be read.");
+        result = m_Data->ReadPointersVirtual(1, offset, &mmNonPagedPoolStart);
+        if (!SUCCEEDED(result))
+        {
+            throw std::runtime_error("nt!MmNonPagedPoolStart could not be read.");
+        }
     }
 
     // Read PoolBigPageTableSize
@@ -307,6 +323,8 @@ EXT_CLASS::FindPgPagesFromNonPagedPool()
         // Filter by the address
         if (startAddr < mmNonPagedPoolStart)
         {
+            // This assertion seem reasonable but not always be true.
+            //assert(entry.PoolType & 1 /*PagedPool*/);
             continue;
         }
 

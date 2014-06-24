@@ -16,23 +16,21 @@
 // macro utilities
 //
 
-#ifndef PXE_BASE
-#define PXE_BASE          0xFFFFF6FB7DBED000UI64
-#define PXE_SELFMAP       0xFFFFF6FB7DBEDF68UI64
-#define PPE_BASE          0xFFFFF6FB7DA00000UI64
-#define PDE_BASE          0xFFFFF6FB40000000UI64
-#define PTE_BASE          0xFFFFF68000000000UI64
+static const auto PXE_BASE    = 0xFFFFF6FB7DBED000UI64;
+static const auto PXE_SELFMAP = 0xFFFFF6FB7DBEDF68UI64;
+static const auto PPE_BASE    = 0xFFFFF6FB7DA00000UI64;
+static const auto PDE_BASE    = 0xFFFFF6FB40000000UI64;
+static const auto PTE_BASE    = 0xFFFFF68000000000UI64;
 
-#define PXE_TOP           0xFFFFF6FB7DBEDFFFUI64
-#define PPE_TOP           0xFFFFF6FB7DBFFFFFUI64
-#define PDE_TOP           0xFFFFF6FB7FFFFFFFUI64
-#define PTE_TOP           0xFFFFF6FFFFFFFFFFUI64
+static const auto PXE_TOP     = 0xFFFFF6FB7DBEDFFFUI64;
+static const auto PPE_TOP     = 0xFFFFF6FB7DBFFFFFUI64;
+static const auto PDE_TOP     = 0xFFFFF6FB7FFFFFFFUI64;
+static const auto PTE_TOP     = 0xFFFFF6FFFFFFFFFFUI64;
 
-#define PTI_SHIFT 12
-#define PDI_SHIFT 21
-#define PPI_SHIFT 30
-#define PXI_SHIFT 39
-#endif
+static const auto PTI_SHIFT = 12;
+static const auto PDI_SHIFT = 21;
+static const auto PPI_SHIFT = 30;
+static const auto PXI_SHIFT = 39;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +44,7 @@
 // types
 //
 
-#define _HARDWARE_PTE_WORKING_SET_BITS  11
+static const auto HARDWARE_PTE_WORKING_SET_BITS = 11;
 typedef struct _HARDWARE_PTE
 {
     ULONG64 Valid : 1;
@@ -62,8 +60,8 @@ typedef struct _HARDWARE_PTE
     ULONG64 Prototype : 1;            // software field
     ULONG64 reserved0 : 1;            // software field
     ULONG64 PageFrameNumber : 28;
-    ULONG64 reserved1 : 24 - (_HARDWARE_PTE_WORKING_SET_BITS + 1);
-    ULONG64 SoftwareWsIndex : _HARDWARE_PTE_WORKING_SET_BITS;
+    ULONG64 reserved1 : 24 - (HARDWARE_PTE_WORKING_SET_BITS + 1);
+    ULONG64 SoftwareWsIndex : HARDWARE_PTE_WORKING_SET_BITS;
     ULONG64 NoExecute : 1;
 } HARDWARE_PTE, *PHARDWARE_PTE;
 C_ASSERT(sizeof(HARDWARE_PTE) == 8);

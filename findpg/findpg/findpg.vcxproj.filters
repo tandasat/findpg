@@ -30,12 +30,24 @@
     <ClInclude Include="PoolTagDescription.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scope_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="unique_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="findpg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolTagDescription.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Progress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

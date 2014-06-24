@@ -1,16 +1,13 @@
 //
-// This module declears a class responsible for displaying progress.
+// This module implements a class responsible for displaying progress.
 //
-#pragma once
+#include "stdafx.h"
 
 // C/C++ standard headers
-#include <cstdint>
-
 // Other external headers
 // Windows headers
-#include <engextcpp.hpp>
-
 // Original headers
+#include "Progress.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,20 +27,31 @@
 // types
 //
 
-class Progress
+Progress::Progress(
+    __in ExtExtension* Ext)
+    : m_Ext(Ext)
+    , m_Progress(0)
 {
-public:
-    Progress(
-        __in ExtExtension* Ext);
+}
 
-    ~Progress();
 
-    Progress& operator++();
+Progress::~Progress()
+{
+    m_Ext->Out("\n");
+}
 
-private:
-    ExtExtension* m_Ext;
-    std::uint64_t m_Progress;
-};
+
+Progress& Progress::operator++()
+{
+    if (m_Progress == 70)
+    {
+        m_Progress = 0;
+        m_Ext->Out("\n");
+    }
+    ++m_Progress;
+    m_Ext->Out(".");
+    return *this;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

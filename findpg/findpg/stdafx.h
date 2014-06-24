@@ -7,6 +7,7 @@
 #include "targetver.h"
 
 // C/C++ standard headers
+#include <cassert>
 #include <cstdint>
 #include <array>
 #include <memory>
@@ -23,6 +24,8 @@
 #include <engextcpp.hpp>
 
 // Original headers
+#include "unique_resource.h"
+#include "scope_guard.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,12 +62,4 @@
 //
 // implementations
 //
-
-template<class T, class D> inline
-std::unique_ptr<T, D> make_unique_ex(
-    __in T* p,
-    __in D d = D())
-{
-    return std::unique_ptr<T, D>(p, std::forward<D>(d));
-}
 

@@ -27,10 +27,10 @@ Sample Output
 ![sample_output](/img/sample.png)
 
 - The first field shows a type of memory region
-- Base address is the address of begining of the pages allocated for a PatchGuard context. The contents will be encrypted.
+- Base address is the address of beginning of the pages allocated for a PatchGuard context. The contents will be encrypted.
 - Size is a size of the region. Apparently, it should always be page align when it is PatchGuard's page.
-- The first field of radomness is the number of 0x00 or 0xff in the first 100 bytes of the page. If the page is really  encrypted, it should be relatively low number such as less than 5.
-- The second field of randomnss is the number of unique bytes in the first 100 bytes of the page. When the page is really encrypted, it should be relatively high number such as greater than 70.
+- The first field of randomness is the number of 0x00 or 0xff in the first 100 bytes of the page. If the page is really  encrypted, it should be relatively low number such as less than 5.
+- The second field of randomness is the number of unique bytes in the first 100 bytes of the page. When the page is really encrypted, it should be relatively high number such as greater than 70.
 - The remaining texts are description of the Pooltag. If the pooltag seems to be some third party related one, it will not be a PatchGuard page. On the other hand, if it seems to be a legitimate tag, it does NOT mean that it is NOT a PatchGuard page.
 
 Supported Platforms
